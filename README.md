@@ -6,6 +6,11 @@ hidden: true
 slug: epic-vanilla
 ---
 
+
+> Link to repository
+> [GitHub](https://github.com/AppsFlyerSDK/appsflyer-epic-sample)
+
+
 # AppsFlyer Epic Integration
 
 > 🚧 OS-Restriction
