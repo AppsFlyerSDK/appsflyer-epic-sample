@@ -13,7 +13,7 @@ slug: epic-vanilla
 
 # AppsFlyer Epic Integration
 
-> 🚧 OS-Restriction
+> 🚧 OS Restriction
 >
 > This sample code currently supports windows environment only.
 
