@@ -43,7 +43,7 @@ AppsflyerLauncherModule()->start("DEV_KEY", "APP_ID");
 
 ```
 
-**Arguments**:
+<span id="app-details">**Arguments**:</span>
 
 - `EPIC_APP_ID`: Found in the Epic store link
 - `DEV_KEY`: Get from the marketer or [AppsFlyer HQ](https://support.appsflyer.com/hc/en-us/articles/211719806-App-settings-#general-app-settings).
@@ -72,7 +72,7 @@ using json = nlohmann::json;
 1. Install [Visual Studio](https://visualstudio.microsoft.com/).
 2. Open the solution.
 3. Open the `AppsflyerSampleApp.cpp` file.
-4. On line 112, replace `DEV_KEY` and `APP_ID` with your [app details](#App-Details).
+4. On line 112, replace `DEV_KEY` and `APP_ID` with your [app details](#app-details).
 5. Run the app by clicking **Play** on the top toolbar (Local Windows Debugger). Make sure that the mode is set to Debug.
 6. After 24 hours, the dashboard updates and shows organic and non-organic installs and in-app events.
 
