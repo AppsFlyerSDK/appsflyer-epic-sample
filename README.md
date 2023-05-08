@@ -31,22 +31,35 @@ vcpkg install openssl:x86-windows</code></pre>
 
 `AppsflyerLauncherModule.h`, included in the `appsflyer-module` folder, contains the required code and logic to connect to AppsFlyer servers and report events.
 
-### `void start(const char_ devkey, const char_ appID)`
+### `void init(const char* devkey, const char* appID)`
 
-This method receives your API key and app ID and initializes the AppsFlyer Module that sends first open and session requests to AppsFlyer.
+This method receives your API key and app ID and initializes the AppsFlyer Module.
 
 **Usage**:
 
 ```
-AppsflyerLauncherModule()->start("DEV_KEY", "APP_ID");
-</code></pre>
-
+AppsflyerLauncherModule()->init("DEV_KEY", "STEAM_APP_ID");
 ```
 
 <span id="app-details">**Arguments**:</span>
 
-- `EPIC_APP_ID`: Found in the Epic store link
+- `STEAM_APP_ID`: Found in the [SteamDB](https://steamdb.info/apps/).
 - `DEV_KEY`: Get from the marketer or [AppsFlyer HQ](https://support.appsflyer.com/hc/en-us/articles/211719806-App-settings-#general-app-settings).
+
+### `void start(bool skipFirst = false)`
+
+This method sends first open and /session requests to AppsFlyer.
+
+**Usage**:
+
+```
+// without the flag
+AppsflyerLauncherModule()->start();
+
+// with the flag
+bool skipFirst = [SOME_CONDITION];
+AppsflyerLauncherModule()->start(skipFirst);
+```
 
 ### `void **logEvent**(std::string **event_name**, json **event_values**)`
 
@@ -63,7 +76,7 @@ AppsflyerLauncherModule()->logEvent(event_name, event_values);
 **Note**: To use the JSON, make sure to use the following imports:
 
 ```
-#include &lt;nlohmann/json.hpp>
+#include <nlohmann/json.hpp>
 using json = nlohmann::json;
 ```
 
@@ -94,5 +107,5 @@ using json = nlohmann::json;
 using json = nlohmann::json;
 ```
 
-4. [Initialize](#void-startconst-char-devkey-const-char-appid) the AppsFlyer integration.
+4. [Initialize](#void-initconst-char-devkey-const-char-appid) and [start](#void-startbool-skipfirst--false) the AppsFlyer integration.
 5. Report [in-app events](#void-logeventstdstring-event_name-json-event_values).

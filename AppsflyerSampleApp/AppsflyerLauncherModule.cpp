@@ -16,10 +16,12 @@ CAppsflyerLauncherModule* AppsflyerLauncherModule()
 
 CAppsflyerLauncherModule::CAppsflyerLauncherModule() { }
 
-void CAppsflyerLauncherModule::start(const char * dkey, const char * appid) {
-	// testing af_firstOpen/af_session and af_inappEvent 
+void CAppsflyerLauncherModule::init(const char* dkey, const char* appid) {
 	devkey = dkey;
 	appID = appid;
+}
+
+void CAppsflyerLauncherModule::start(bool skipFirst) {
 	AppsflyerModule afc(devkey, appID);
 
 	std::string app_version = "1.0.0";
@@ -44,7 +46,7 @@ void CAppsflyerLauncherModule::start(const char * dkey, const char * appid) {
 	af_id.value = afc.get_AF_id().c_str();
 	req.device_ids.insert(req.device_ids.end(), af_id);
 
-	afc.af_firstOpen_init(req);
+	afc.af_firstOpen_init(req, skipFirst);
 }
 
 void CAppsflyerLauncherModule::logEvent(std::string event_name, json event_values) {

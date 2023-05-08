@@ -112,10 +112,10 @@ public:
 	}
 
 	// report first open event to AppsFlyer (or session if counter > 2)
-	void af_firstOpen_init(RequestData req) {
+	void af_firstOpen_init(RequestData req, bool skipFirst) {
 		//send requests
 		int af_counter = get_AF_counter();
-		if (af_counter < 2) {
+		if (af_counter < 2 && !skipFirst) {
 			return af_firstOpenRequest(req);
 		}
 		else {
