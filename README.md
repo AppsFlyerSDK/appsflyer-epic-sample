@@ -9,7 +9,7 @@ slug: epic-vanilla
 > Link to repository  
 > [GitHub](https://github.com/AppsFlyerSDK/appsflyer-epic-sample)
 
-# AppsFlyer Epic C++ SDK integration
+## AppsFlyer Epic C++ SDK integration
 
 AppsFlyer empowers gaming marketers to make better decisions by providing powerful tools that solve real pain points, including cross-platform attribution, mobile and web analytics, deep linking, fraud detection, privacy management and preservation, and more.
 
