@@ -20,7 +20,7 @@ We recommend you use this sample app as a reference for integrating the code tha
 
 [vcpkg](https://vcpkg.io/en/index.html) openssl & nlohmann-json packages:
 
-```
+```c++
 vcpkg install nlohmann-json:x86-windows
 vcpkg install openssl:x86-windows</code></pre>
 ```
@@ -37,13 +37,13 @@ This method receives your API key and app ID and initializes the AppsFlyer Modul
 
 **Method signature**
 
-```
+```c++
 void init(const char* devkey, const char* appID)
 ```
 
 **Usage**:
 
-```
+```c++
 AppsflyerLauncherModule()->init("DEV_KEY", "STEAM_APP_ID");
 ```
 
@@ -58,13 +58,13 @@ This method sends first open/session requests to AppsFlyer.
 
 **Method signature**
 
-```
+```c++
 void start(bool skipFirst = false)
 ```
 
 **Usage**:
 
-```
+```c++
 // without the flag
 AppsflyerLauncherModule()->start();
 
@@ -79,13 +79,13 @@ This method receives an event name and JSON object and sends in-app events to Ap
 
 **Method signature**
 
-```
+```c++
 void logEvent(std::string event_name, json event_values)
 ```
 
 **Usage**:
 
-```
+```c++
 json event_values = { {"af_currency", "USD"}, {"af_price", 6.66}, {"af_revenue", 24.12} };
 std::string event_name = "af_purchase";
 AppsflyerLauncherModule()->logEvent(event_name, event_values);
@@ -93,9 +93,25 @@ AppsflyerLauncherModule()->logEvent(event_name, event_values);
 
 **Note**: To use the JSON, make sure to use the following imports:
 
-```
+```c++
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
+```
+
+### GetAppsFlyerUID
+
+Get AppsFlyer's unique device ID. The SDK generates an AppsFlyer unique device ID upon app installation. When the SDK is started, this ID is recorded as the ID of the first app install.
+
+**Method signature**
+
+```c++
+std::string getAppsFlyerUID()
+```
+
+**Usage**:
+
+```c++
+AppsflyerEpicModule()->getAppsFlyerUID();
 ```
 
 ## Running the sample app
@@ -114,16 +130,16 @@ using json = nlohmann::json;
 1. Copy the files from the `appsflyer-module` folder into your C++ project under **Header Files** > **AppsFlyer**.
 2. Import the Module:
 
-```
+```c++
 #include "AppsflyerLauncherModule.h"
 ```
 
 3. Import `nlohmann-json`:
 
-```
+```c++
 #include &lt;nlohmann/json.hpp>
 using json = nlohmann::json;
 ```
 
-4. [Initialize](#void-initconst-char-devkey-const-char-appid) and [start](#void-startbool-skipfirst--false) the AppsFlyer integration.
-5. Report [in-app events](#void-logeventstdstring-event_name-json-event_values).
+4. [Initialize](#init) and [start](#start) the AppsFlyer integration.
+5. Report [in-app events](#logevent).

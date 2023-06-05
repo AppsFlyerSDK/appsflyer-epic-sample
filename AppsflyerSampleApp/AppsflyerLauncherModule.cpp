@@ -78,3 +78,9 @@ void CAppsflyerLauncherModule::logEvent(std::string event_name, json event_value
 
 	afc.af_inappEvent(req);
 }
+
+std::string CAppsflyerLauncherModule::getAppsFlyerUID()
+{
+    AppsflyerModule afc(devkey, appID);
+	return afc.get_AF_id();
+}
