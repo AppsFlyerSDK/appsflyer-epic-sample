@@ -21,8 +21,9 @@ We recommend you use this sample app as a reference for integrating the code tha
 [vcpkg](https://vcpkg.io/en/index.html) openssl & nlohmann-json packages:
 
 ```c++
+vcpkg install curl:x86-windows
 vcpkg install nlohmann-json:x86-windows
-vcpkg install openssl:x86-windows</code></pre>
+vcpkg install openssl:x86-windows
 ```
 
 <hr/>
@@ -137,7 +138,7 @@ AppsflyerEpicModule()->getAppsFlyerUID();
 3. Import `nlohmann-json`:
 
 ```c++
-#include &lt;nlohmann/json.hpp>
+#include <nlohmann/json.hpp>
 using json = nlohmann::json;
 ```
 
