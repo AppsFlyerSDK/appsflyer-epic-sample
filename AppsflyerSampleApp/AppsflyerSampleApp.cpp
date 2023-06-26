@@ -110,6 +110,12 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     AppsflyerLauncherModule()->Init("DEV_KEY", "APP_ID");
     AppsflyerLauncherModule()->Start();
 
+    // will return false
+    bool dateBefore = AppsflyerLauncherModule()->IsInstallOlderThanDate("2023-January-01 23:12:34");
+
+    // will return true
+    bool dateAfter = AppsflyerLauncherModule()->IsInstallOlderThanDate("2024-April-10 23:12:34");
+
     if (!hWnd)
     {
         return FALSE;

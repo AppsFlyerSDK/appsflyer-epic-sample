@@ -9,15 +9,8 @@ using json = nlohmann::json;
 #include <openssl/hmac.h>
 #include <string>
 #include <sstream>
-#include <iostream>
 
 using namespace std;
-
-static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
-{
-	((std::string *)userp)->append((char *)contents, size * nmemb);
-	return size * nmemb;
-}
 
 class AppsflyerModule
 {
@@ -29,10 +22,11 @@ public:
 	}
 
 	// send curl with hmac auth and json data
-	void send_http_post(std::string &url, std::string jsonData, int ulContextValue)
+	tuple<CURLcode, long> send_http_post(std::string &url, std::string jsonData, int ulContextValue)
 	{
 		CURL *curl;
-		CURLcode res;
+		CURLcode res{};
+		long response_code;
 		std::string readBuffer;
 		curl = curl_easy_init();
 		if (curl)
@@ -77,61 +71,57 @@ public:
 			curl_easy_setopt(curl, CURLOPT_POSTFIELDS, jsonData.c_str());
 			curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, jsonData.length());
 			curl_easy_setopt(curl, CURLOPT_POST, 1);
+			std::string userAgentStr = "Native PC/HTTP Client 1.0 (" + _appid + ")";
+			const char *userAgent = userAgentStr.c_str();
+			curl_easy_setopt(curl, CURLOPT_USERAGENT, userAgent);
 			// curl_easy_setopt(curl, CURLOPT_PROXY, "127.0.0.1:8888"); // redirect traffic to Fiddler for debugging
-			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-			curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 
 			/* Perform the request, res will get the return code */
-			res = curl_easy_perform(curl);
+			curl_easy_perform(curl);
+
 			/* Check for errors */
 			if (res != CURLE_OK)
 			{
+				response_code = 0;
 				fprintf(stderr, "curl_easy_perform() failed: %s\n",
 						curl_easy_strerror(res));
 			}
-
-			long response_code;
-			curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
-
-			switch (ulContextValue)
+			else
 			{
-			case FIRST_OPEN_REQUEST:
-			case SESSION_REQUEST:
-				if (response_code == 202)
-				{
-					increase_AF_counter();
-				}
-				break;
-			case INAPP_EVENT_REQUEST:
-				break;
-			default:
-				break;
+				curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
+				// std::string test = readBuffer;
 			}
-
-			std::string test = readBuffer;
-
 			/* always cleanup */
 			curl_easy_cleanup(curl);
 		}
+		return {res, response_code};
 	}
 
 	// report first open event to AppsFlyer (or session if counter > 2)
-	void af_firstOpen_init(RequestData req, bool skipFirst)
+	tuple<CURLcode, long, int> af_firstOpen_init(RequestData req)
 	{
 		// send requests
 		int af_counter = get_AF_counter();
-		if (af_counter < 2 && !skipFirst)
+		if (af_counter < 2)
 		{
-			return af_firstOpenRequest(req);
+			// auto [res, rescode] = af_firstOpenRequest(req);
+			tuple<CURLcode, long> tpl = af_firstOpenRequest(req);
+			CURLcode res = std::get<CURLcode>(tpl);
+			long rescode = std::get<long>(tpl);
+			return {res, rescode, FIRST_OPEN_REQUEST};
 		}
 		else
 		{
-			return af_sessionRequest(req);
+			// auto [res, rescode] = af_sessionRequest(req);
+			tuple<CURLcode, long> tpl = af_sessionRequest(req);
+			CURLcode res = std::get<CURLcode>(tpl);
+			long rescode = std::get<long>(tpl);
+			return {res, rescode, SESSION_REQUEST};
 		}
 	}
 
 	// report inapp event to AppsFlyer
-	void af_inappEvent(RequestData req)
+	tuple<CURLcode, long, int> af_inappEvent(RequestData req)
 	{
 		std::string url = "https://events.appsflyer.com/v1.0/c2s/inapp/app/epic/" + _appid;
 
@@ -139,12 +129,15 @@ public:
 		std::ostringstream oss;
 
 		// use ADL to select best to_string function
-		auto event_values_j_str = to_string(req.event_values); // calling nlohmann::to_string
+		auto event_parameters_j_str = to_string(req.event_parameters); // calling nlohmann::to_string
 
-		oss << "{\"device_ids\":[{\"type\":\"" << req.device_ids[0].type << "\",\"value\":\"" << req.device_ids[0].value << "\"}],\"request_id\":\"" << req.request_id << "\",\"device_os_version\":\"" << req.device_os_version << "\",\"device_model\":\"" << req.device_model << "\",\"limit_ad_tracking\":" << req.limit_ad_tracking << ",\"app_version\":\"" << req.app_version << "\",\"event_parameters\":" << event_values_j_str << ",\"event_name\":\"" << req.event_name << "\"}";
+		oss << "{\"device_ids\":[{\"type\":\"" << req.device_ids[0].type << "\",\"value\":\"" << req.device_ids[0].value << "\"}],\"request_id\":\"" << req.request_id << "\",\"device_os_version\":\"" << req.device_os_version << "\",\"device_model\":\"" << req.device_model << "\",\"limit_ad_tracking\":" << req.limit_ad_tracking << ",\"app_version\":\"" << req.app_version << "\",\"event_parameters\":" << event_parameters_j_str << ",\"event_name\":\"" << req.event_name << "\"}";
 		std::string jsonData = oss.str();
-
-		return send_http_post(url, jsonData, INAPP_EVENT_REQUEST);
+		// auto [res, rescode] = send_http_post(url, jsonData, INAPP_EVENT_REQUEST);
+		tuple<CURLcode, long> tpl = send_http_post(url, jsonData, INAPP_EVENT_REQUEST);
+		CURLcode res = std::get<CURLcode>(tpl);
+		long rescode = std::get<long>(tpl);
+		return {res, rescode, INAPP_EVENT_REQUEST};
 	}
 
 	// return af uuid
@@ -317,7 +310,7 @@ private:
 	}
 
 	// report first open event to AppsFlyer
-	void af_firstOpenRequest(RequestData req)
+	tuple<CURLcode, long> af_firstOpenRequest(RequestData req)
 	{
 		std::string url = "https://events.appsflyer.com/v1.0/c2s/first_open/app/epic/" + _appid;
 
@@ -331,7 +324,7 @@ private:
 	}
 
 	// report session event (after the counter passes 2 opens) to AppsFlyer
-	void af_sessionRequest(RequestData req)
+	tuple<CURLcode, long> af_sessionRequest(RequestData req)
 	{
 		std::string url = "https://events.appsflyer.com/v1.0/c2s/session/app/epic/" + _appid;
 

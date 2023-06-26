@@ -45,12 +45,12 @@ void Init(const char* devkey, const char* appID)
 **Usage**:
 
 ```c++
-AppsflyerLauncherModule()->Init("DEV_KEY", "STEAM_APP_ID");
+AppsflyerLauncherModule()->Init("DEV_KEY", "EPIC_APP_ID");
 ```
 
 <span id="app-details">**Arguments**:</span>
 
-- `STEAM_APP_ID`: Found in the [SteamDB](https://steamdb.info/apps/).
+- `EPIC_APP_ID`: Your Epic app id.
 - `DEV_KEY`: Get from the marketer or [AppsFlyer HQ](https://support.appsflyer.com/hc/en-us/articles/211719806-App-settings-#general-app-settings).
 
 ### Start
@@ -112,7 +112,7 @@ std::string GetAppsFlyerUID()
 **Usage**:
 
 ```c++
-AppsflyerEpicModule()->GetAppsFlyerUID();
+AppsflyerLauncherModule()->GetAppsFlyerUID();
 ```
 
 ### IsInstallOlderThanDate
