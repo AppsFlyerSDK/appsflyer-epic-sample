@@ -7,26 +7,27 @@ using json = nlohmann::json;
 
 using namespace std;
 
-
-CAppsflyerLauncherModule* AppsflyerLauncherModule()
+CAppsflyerLauncherModule *AppsflyerLauncherModule()
 {
 	static CAppsflyerLauncherModule inv;
 	return &inv;
 }
 
-CAppsflyerLauncherModule::CAppsflyerLauncherModule() { }
+CAppsflyerLauncherModule::CAppsflyerLauncherModule() {}
 
-void CAppsflyerLauncherModule::init(const char* dkey, const char* appid) {
+void CAppsflyerLauncherModule::Init(const char *dkey, const char *appid)
+{
 	devkey = dkey;
 	appID = appid;
 }
 
-void CAppsflyerLauncherModule::start(bool skipFirst) {
+void CAppsflyerLauncherModule::Start(bool skipFirst)
+{
 	AppsflyerModule afc(devkey, appID);
 
 	std::string app_version = "1.0.0";
 
-	//create timestamp
+	// create timestamp
 	std::time_t t = std::time(0);
 	std::ostringstream oss;
 	oss << t;
@@ -40,7 +41,7 @@ void CAppsflyerLauncherModule::start(bool skipFirst) {
 	req.limit_ad_tracking = "false";
 	req.request_id = afc.uuid_gen().c_str();
 
-	//adding AF id to the request
+	// adding AF id to the request
 	DeviceIDs af_id;
 	af_id.type = "custom";
 	af_id.value = afc.get_AF_id().c_str();
@@ -49,12 +50,13 @@ void CAppsflyerLauncherModule::start(bool skipFirst) {
 	afc.af_firstOpen_init(req, skipFirst);
 }
 
-void CAppsflyerLauncherModule::logEvent(std::string event_name, json event_values) {
+void CAppsflyerLauncherModule::LogEvent(std::string event_name, json event_values)
+{
 	AppsflyerModule afc(devkey, appID);
 
 	std::string app_version = "1.0.0";
 
-	//create timestamp
+	// create timestamp
 	std::time_t t = std::time(0);
 	std::ostringstream oss;
 	oss << t;
@@ -64,11 +66,11 @@ void CAppsflyerLauncherModule::logEvent(std::string event_name, json event_value
 	req.timestamp = timestamp;
 	req.device_os_version = "1.0.0";
 	req.app_version = app_version;
-	req.device_model = afc.get_OS(); //TODO: check how to retreive device model - in the meantime send 'steam'
+	req.device_model = afc.get_OS(); // TODO: check how to retreive device model - in the meantime send 'steam'
 	req.limit_ad_tracking = "false";
 	req.request_id = afc.uuid_gen().c_str();
 
-	//adding AF id to the request
+	// adding AF id to the request
 	DeviceIDs af_id;
 	af_id.type = "custom";
 	af_id.value = afc.get_AF_id().c_str();
@@ -79,8 +81,14 @@ void CAppsflyerLauncherModule::logEvent(std::string event_name, json event_value
 	afc.af_inappEvent(req);
 }
 
-std::string CAppsflyerLauncherModule::getAppsFlyerUID()
+std::string CAppsflyerLauncherModule::GetAppsFlyerUID()
 {
-    AppsflyerModule afc(devkey, appID);
+	AppsflyerModule afc(devkey, appID);
 	return afc.get_AF_id();
+}
+
+bool CAppsflyerLauncherModule::IsInstallOlderThanDate(std::string datestring)
+{
+	AppsflyerModule afc(devkey, appID);
+	return afc.isInstallOlderThanDate(datestring);
 }
