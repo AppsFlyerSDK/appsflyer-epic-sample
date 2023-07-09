@@ -143,13 +143,13 @@ bool IsInstallOlderThanDate(std::string datestring)
 // the modification date in this example is "2023-January-23 08:30:00"
 
 // will return false
-bool dateBefore = AppsflyerSteamModule()->IsInstallOlderThanDate("2023-January-01 23:12:34");
+bool dateBefore = AppsflyerLauncherModule()->IsInstallOlderThanDate("2023-January-01 23:12:34");
 
 // will return true
-bool dateAfter = AppsflyerSteamModule()->IsInstallOlderThanDate("2023-April-10 23:12:34");
+bool dateAfter = AppsflyerLauncherModule()->IsInstallOlderThanDate("2023-April-10 23:12:34");
 
 // example usage with skipFirst:
-bool isInstallOlderThanDate = AppsflyerSteamModule()->IsInstallOlderThanDate("2023-April-01 23:12:34");
+bool isInstallOlderThanDate = AppsflyerLauncherModule()->IsInstallOlderThanDate("2023-April-01 23:12:34");
 AppsflyerLauncherModule()->Start(isInstallOlderThanDate);
 ```
 
