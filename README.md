@@ -45,7 +45,7 @@ void Init(const char* devkey, const char* appID)
 **Usage**:
 
 ```c++
-AppsflyerLauncherModule()->Init("DEV_KEY", "EPIC_APP_ID");
+AppsflyerLauncherModule()->Init(<< DEV_KEY >>, << DEV_KEY >>);
 ```
 
 <span id="app-details">**Arguments**:</span>
@@ -147,6 +147,10 @@ bool dateBefore = AppsflyerSteamModule()->IsInstallOlderThanDate("2023-January-0
 
 // will return true
 bool dateAfter = AppsflyerSteamModule()->IsInstallOlderThanDate("2023-April-10 23:12:34");
+
+// example usage with skipFirst:
+bool isInstallOlderThanDate = AppsflyerSteamModule()->IsInstallOlderThanDate("2023-April-01 23:12:34");
+AppsflyerLauncherModule()->Start(isInstallOlderThanDate);
 ```
 
 ## Running the sample app
