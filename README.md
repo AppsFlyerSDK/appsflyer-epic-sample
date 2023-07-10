@@ -45,7 +45,7 @@ void Init(const char* devkey, const char* appID)
 **Usage**:
 
 ```c++
-AppsflyerLauncherModule()->Init(<< DEV_KEY >>, << DEV_KEY >>);
+AppsflyerLauncherModule()->Init(<< DEV_KEY >>, << APP_ID >>);
 ```
 
 <span id="app-details">**Arguments**:</span>
