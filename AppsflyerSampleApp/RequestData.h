@@ -15,6 +15,7 @@ public:
 	std::vector<DeviceIDs> device_ids;
 	std::string request_id;
 	std::string limit_ad_tracking;
+	std::string customer_user_id;
 	std::string event_name;
-	json event_values;
+	json event_parameters;
 };

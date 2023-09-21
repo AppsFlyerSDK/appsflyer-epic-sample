@@ -31,3 +31,17 @@
 *.out
 *.app
 .vscode/settings.json
+*.ipch
+*.db-wal
+*.db-shm
+*.db
+*.opendb
+*.vsidx
+*.lock
+*.tlog
+*.log
+*.recipe
+*.idb
+AppsflyerSampleApp/x64/Debug/
+*.pdb
+.vs/
