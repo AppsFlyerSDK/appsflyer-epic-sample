@@ -15,16 +15,16 @@ using namespace std;
 class AppsflyerModule
 {
 public:
-	AppsflyerModule(const char *devkey, std::string appid)
+	AppsflyerModule(const char* devkey, std::string appid)
 	{
 		_devkey = devkey;
 		_appid = appid;
 	}
 
 	// send curl with hmac auth and json data
-	tuple<CURLcode, long> send_http_post(std::string &url, std::string jsonData, int ulContextValue)
+	tuple<CURLcode, long> send_http_post(std::string& url, std::string jsonData, int ulContextValue)
 	{
-		CURL *curl;
+		CURL* curl;
 		CURLcode res{};
 		long response_code;
 		std::string readBuffer;
@@ -33,15 +33,15 @@ public:
 		{
 			curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 
-			char *key = _strdup(_devkey);
+			char* key = _strdup(_devkey);
 			int keylen = strlen(key);
-			const unsigned char *data = (const unsigned char *)_strdup(jsonData.c_str());
+			const unsigned char* data = (const unsigned char*)_strdup(jsonData.c_str());
 
-			int datalen = strlen((char *)data);
-			unsigned char *result = NULL;
+			int datalen = strlen((char*)data);
+			unsigned char* result = NULL;
 			unsigned int resultlen = -1;
 
-			result = mx_hmac_sha256((const void *)key, keylen, data, datalen, result, &resultlen);
+			result = mx_hmac_sha256((const void*)key, keylen, data, datalen, result, &resultlen);
 
 			for (unsigned int i = 0; i < resultlen; i++)
 			{
@@ -56,14 +56,14 @@ public:
 			}
 			std::string mystr = ss.str();
 
-			const char *a = "Authorization: ";
-			const char *b = mystr.c_str();
+			const char* a = "Authorization: ";
+			const char* b = mystr.c_str();
 
 			char buf[100];
 			strcpy_s(buf, a);
 			strcat_s(buf, b);
 
-			struct curl_slist *slist = NULL;
+			struct curl_slist* slist = NULL;
 			slist = curl_slist_append(slist, "Content-Type: application/json");
 			slist = curl_slist_append(slist, buf);
 			curl_easy_setopt(curl, CURLOPT_HTTPHEADER, slist);
@@ -72,9 +72,9 @@ public:
 			curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, jsonData.length());
 			curl_easy_setopt(curl, CURLOPT_POST, 1);
 			std::string userAgentStr = "Native PC/HTTP Client 1.0 (" + _appid + ")";
-			const char *userAgent = userAgentStr.c_str();
+			const char* userAgent = userAgentStr.c_str();
 			curl_easy_setopt(curl, CURLOPT_USERAGENT, userAgent);
-			// curl_easy_setopt(curl, CURLOPT_PROXY, "127.0.0.1:8888"); // redirect traffic to Fiddler for debugging
+			//curl_easy_setopt(curl, CURLOPT_PROXY, "127.0.0.1:8888"); // redirect traffic to Fiddler for debugging
 
 			/* Perform the request, res will get the return code */
 			curl_easy_perform(curl);
@@ -84,7 +84,7 @@ public:
 			{
 				response_code = 0;
 				fprintf(stderr, "curl_easy_perform() failed: %s\n",
-						curl_easy_strerror(res));
+					curl_easy_strerror(res));
 			}
 			else
 			{
@@ -94,7 +94,7 @@ public:
 			/* always cleanup */
 			curl_easy_cleanup(curl);
 		}
-		return {res, response_code};
+		return { res, response_code };
 	}
 
 	// report first open event to AppsFlyer (or session if counter > 2)
@@ -108,7 +108,7 @@ public:
 			tuple<CURLcode, long> tpl = af_firstOpenRequest(req);
 			CURLcode res = std::get<CURLcode>(tpl);
 			long rescode = std::get<long>(tpl);
-			return {res, rescode, FIRST_OPEN_REQUEST};
+			return { res, rescode, FIRST_OPEN_REQUEST };
 		}
 		else
 		{
@@ -116,7 +116,7 @@ public:
 			tuple<CURLcode, long> tpl = af_sessionRequest(req);
 			CURLcode res = std::get<CURLcode>(tpl);
 			long rescode = std::get<long>(tpl);
-			return {res, rescode, SESSION_REQUEST};
+			return { res, rescode, SESSION_REQUEST };
 		}
 	}
 
@@ -129,15 +129,13 @@ public:
 		std::ostringstream oss;
 
 		// use ADL to select best to_string function
-		auto event_parameters_j_str = to_string(req.event_parameters); // calling nlohmann::to_string
+		std::string jsonData = postDataStr(req, true);
 
-		oss << "{\"device_ids\":[{\"type\":\"" << req.device_ids[0].type << "\",\"value\":\"" << req.device_ids[0].value << "\"}],\"request_id\":\"" << req.request_id << "\",\"device_os_version\":\"" << req.device_os_version << "\",\"device_model\":\"" << req.device_model << "\",\"limit_ad_tracking\":" << req.limit_ad_tracking << ",\"app_version\":\"" << req.app_version << "\",\"event_parameters\":" << event_parameters_j_str << ",\"event_name\":\"" << req.event_name << "\"}";
-		std::string jsonData = oss.str();
 		// auto [res, rescode] = send_http_post(url, jsonData, INAPP_EVENT_REQUEST);
 		tuple<CURLcode, long> tpl = send_http_post(url, jsonData, INAPP_EVENT_REQUEST);
 		CURLcode res = std::get<CURLcode>(tpl);
 		long rescode = std::get<long>(tpl);
-		return {res, rescode, INAPP_EVENT_REQUEST};
+		return { res, rescode, INAPP_EVENT_REQUEST };
 	}
 
 	// return af uuid
@@ -188,9 +186,9 @@ public:
 		return GUID_toString(&gidReference);
 	}
 
-	std::time_t to_time_t(const std::string &str, bool is_dst = false, const std::string &format = "%Y-%b-%d %H:%M:%S")
+	std::time_t to_time_t(const std::string& str, bool is_dst = false, const std::string& format = "%Y-%b-%d %H:%M:%S")
 	{
-		std::tm t = {0};
+		std::tm t = { 0 };
 		t.tm_isdst = is_dst ? 1 : 0;
 		std::istringstream ss(str);
 		ss >> std::get_time(&t, format.c_str());
@@ -222,13 +220,13 @@ private:
 	std::string _appid;
 
 	// the AF app _devkey
-	const char *_devkey;
+	const char* _devkey;
 
 	// the registry path for saving the AF data.
 	std::string reg_path = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
 
 	// convert guid to string
-	std::string GUID_toString(GUID *guid)
+	std::string GUID_toString(GUID* guid)
 	{
 		char guid_string[37]; // 32 hex chars + 4 hyphens + null terminator
 		snprintf(
@@ -242,7 +240,7 @@ private:
 	}
 
 	// retreive data from registry by key
-	std::string reg_getKey(HKEY hkey, const std::string &location, const std::string &name)
+	std::string reg_getKey(HKEY hkey, const std::string& location, const std::string& name)
 	{
 		HKEY key;
 		TCHAR value[1024];
@@ -270,7 +268,7 @@ private:
 	}
 
 	// save data to registry by key
-	void reg_writeKey(HKEY hkey, const std::string &location, const std::string &name, const std::string &data)
+	void reg_writeKey(HKEY hkey, const std::string& location, const std::string& name, const std::string& data)
 	{
 
 		HKEY key_handle;
@@ -280,10 +278,10 @@ private:
 		{
 			std::string fullname = name + "_" + _appid;
 			result = RegSetValueExA(key_handle, (fullname.c_str()),
-									0,
-									REG_SZ,
-									(unsigned char *)data.c_str(),
-									data.length() * sizeof(wchar_t));
+				0,
+				REG_SZ,
+				(unsigned char*)data.c_str(),
+				data.length() * sizeof(wchar_t));
 
 			if (result != ERROR_SUCCESS)
 			{
@@ -309,15 +307,29 @@ private:
 		return std::stoi(counter);
 	}
 
+	std::string postDataStr(RequestData req, bool isEvent = false) {
+		std::ostringstream oss;
+		oss << "{\"device_ids\":[{\"type\":\"" << req.device_ids[0].type << "\",\"value\":\"" << req.device_ids[0].value << "\"}";
+		oss << "],\"request_id\":\"" << req.request_id << "\",\"device_os_version\":\"" << req.device_os_version << "\",\"device_model\":\"" << req.device_model << "\",\"limit_ad_tracking\":" << req.limit_ad_tracking << ",\"app_version\":\"" << req.app_version << "\"";
+		if (isEvent) {
+			auto event_parameters_j_str = to_string(req.event_parameters); // calling nlohmann::to_string
+			oss << ",\"event_parameters\":" << event_parameters_j_str << ",\"event_name\":\"" << req.event_name << "\"";
+		}
+		if (!req.customer_user_id.empty()) {
+			oss << ",\"customer_user_id\":\"" << req.customer_user_id << "\"";
+		}
+		oss << "}";
+
+		return oss.str();
+	}
+
 	// report first open event to AppsFlyer
 	tuple<CURLcode, long> af_firstOpenRequest(RequestData req)
 	{
 		std::string url = "https://events.appsflyer.com/v1.0/c2s/first_open/app/epic/" + _appid;
 
 		/* Now specify the POST data */
-		std::ostringstream oss;
-		oss << "{\"device_ids\":[{\"type\":\"" << req.device_ids[0].type << "\",\"value\":\"" << req.device_ids[0].value.c_str() << "\"}],\"timestamp\":" << req.timestamp << ",\"request_id\":\"" << req.request_id << "\",\"device_os_version\":\"" << req.device_os_version << "\",\"device_model\":\"" << req.device_model << "\",\"limit_ad_tracking\":" << req.limit_ad_tracking << ",\"app_version\":\"" << req.app_version << "\"}";
-		std::string jsonData = oss.str();
+		std::string jsonData = postDataStr(req);
 
 		return send_http_post(url, jsonData, FIRST_OPEN_REQUEST);
 		// CURLcode res = send_http_post(url, jsonData);
@@ -329,16 +341,14 @@ private:
 		std::string url = "https://events.appsflyer.com/v1.0/c2s/session/app/epic/" + _appid;
 
 		/* Now specify the POST data */
-		std::ostringstream oss;
-		oss << "{\"device_ids\":[{\"type\":\"" << req.device_ids[0].type << "\",\"value\":\"" << req.device_ids[0].value.c_str() << "\"}],\"timestamp\":" << req.timestamp << ",\"request_id\":\"" << req.request_id << "\",\"device_os_version\":\"" << req.device_os_version << "\",\"device_model\":\"" << req.device_model << "\",\"limit_ad_tracking\":" << req.limit_ad_tracking << ",\"app_version\":\"" << req.app_version << "\"}";
-		std::string jsonData = oss.str();
+		std::string jsonData = postDataStr(req);
 
 		return send_http_post(url, jsonData, SESSION_REQUEST);
 	}
 
 	// encrypt data with _devkey
-	unsigned char *mx_hmac_sha256(const void *key, int keylen, const unsigned char *data, int datalen,
-								  unsigned char *result, unsigned int *resultlen)
+	unsigned char* mx_hmac_sha256(const void* key, int keylen, const unsigned char* data, int datalen,
+		unsigned char* result, unsigned int* resultlen)
 	{
 		return HMAC(EVP_sha256(), key, keylen, data, datalen, result, resultlen);
 	}

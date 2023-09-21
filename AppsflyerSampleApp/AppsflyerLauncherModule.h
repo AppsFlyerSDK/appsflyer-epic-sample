@@ -13,6 +13,8 @@ public:
 	void Init(const char *devkey, const char *appID);
 	// sends "first open/session" request to AppsFlyer.
 	void Start(bool skipFirst = false);
+	void Stop();
+	void SetCustomerUserId(std::string customerUserID);
 	/*  These methods are called upon a un/successful http request callback.
 	Those are placeholders that you can fill with the desired actions upon success/failure
 	(within AppsflyerLauncherModule.cpp file) */
@@ -28,6 +30,9 @@ public:
 private:
 	const char *devkey;
 	const char *appID;
+	bool isStopped;
+	std::string cuid;
+	RequestData CreateRequestData();
 	friend CAppsflyerLauncherModule *AppsflyerLauncherModule();
 	CAppsflyerLauncherModule();
 	void OnHTTPCallBack(CURLcode res, long responseCode, int context);
