@@ -42,7 +42,7 @@ void CAppsflyerLauncherModule::Stop()
 	isStopped = true;
 }
 
-void CAppsflyerLauncherModule::LogEvent(std::string event_name, json event_parameters)
+void CAppsflyerLauncherModule::LogEvent(std::string event_name, json event_parameters, json event_custom_parameters)
 {
 	if (isStopped) {
 		return;
@@ -54,6 +54,7 @@ void CAppsflyerLauncherModule::LogEvent(std::string event_name, json event_param
 
 	req.event_name = event_name;
 	req.event_parameters = event_parameters;
+	req.event_custom_parameters = event_custom_parameters;
 
 	tuple<CURLcode, long, int> tpl = afc.af_inappEvent(req);
 	CURLcode res = std::get<CURLcode>(tpl);
@@ -61,6 +62,12 @@ void CAppsflyerLauncherModule::LogEvent(std::string event_name, json event_param
 	int context = std::get<int>(tpl);
 	// auto [res, rescode, context] = afc.af_inappEvent(req);
 	AppsflyerLauncherModule()->OnHTTPCallBack(res, rescode, context);
+}
+
+std::string CAppsflyerLauncherModule::to_utf8(std::wstring& wide_string)
+{
+	static std::wstring_convert<std::codecvt_utf8<wchar_t>> utf8_conv;
+	return utf8_conv.to_bytes(wide_string);
 }
 
 void CAppsflyerLauncherModule::SetCustomerUserId(std::string customerUserID)

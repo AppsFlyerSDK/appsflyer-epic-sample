@@ -102,15 +102,32 @@ This method receives an event name and JSON object and sends in-app events to Ap
 **Method signature**
 
 ```c++
-void LogEvent(std::string event_name, json event_values)
+void LogEvent(std::string event_name, json event_values, json custom_event_values = {})
 ```
+
+**Arguments**
+
+- `std::string event_name`-
+- `json event_parameters`: dictionary object which contains the [predefined event parameters](https://dev.appsflyer.com/hc/docs/ctv-log-event-event-parameters).
+- `json event_custom_parameters` (non-mandatory): dictionary object which contains the any custom event parameters. For non-English values, please use [UTF-8 encoding](#to_utf8).
 
 **Usage**:
 
 ```c++
-json event_values = { {"af_currency", "USD"}, {"af_price", 6.66}, {"af_revenue", 24.12} };
+// Setting the event values json and event name
 std::string event_name = "af_purchase";
-AppsflyerLauncherModule()->LogEvent(event_name, event_values);
+json event_values = { {"af_currency", "USD"}, {"af_price", 6.66}, {"af_revenue", 24.12} };
+// Send LogEvent request
+AppsflyerLauncherModule()->LogEvent(event_name, event_parameters);
+
+// Send LogEvent request with custom event params and UTF8 encoding (for non-English characters)
+std::wstring ws = L"車B1234 こんにちは";
+std::wstring ws2 = L"新人邀约购物日";
+custom_event_parameters = { 
+    {"goodsName", AppsflyerLauncherModule()->to_utf8(ws)}, 
+    {"goodsName2", AppsflyerLauncherModule()->to_utf8(ws2)} 
+};
+AppsflyerLauncherModule()->LogEvent(event_name, event_parameters, custom_event_parameters);
 ```
 
 **Note**: To use the JSON, make sure to use the following imports:
@@ -167,6 +184,27 @@ std::string GetAppsFlyerUID()
 
 ```c++
 AppsflyerLauncherModule()->GetAppsFlyerUID();
+```
+
+### To_utf8
+
+This method receives a reference of a `std::wstring` and returns UTF-8 encoded `std::string`
+
+**Method signature**
+
+```c++
+std::string to_utf8(std::wstring& wide_string);
+```
+
+**Usage**:
+
+```c++
+std::wstring ws = L"車B1234 こんにちは";
+std::wstring ws2 = L"新人邀约购物日";
+custom_event_parameters = { 
+    {"goodsName", AppsflyerLauncherModule()->to_utf8(ws)}, 
+    {"goodsName2", AppsflyerLauncherModule()->to_utf8(ws2)} 
+};
 ```
 
 ### IsInstallOlderThanDate
