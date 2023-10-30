@@ -116,14 +116,14 @@ void LogEvent(std::string event_name, json event_values, json custom_event_value
 ```c++
 // Setting the event values json and event name
 std::string event_name = "af_purchase";
-json event_values = { {"af_currency", "USD"}, {"af_price", 6.66}, {"af_revenue", 24.12} };
+json event_parameters = { {"af_currency", "USD"}, {"af_price", 6.66}, {"af_revenue", 24.12} };
 // Send LogEvent request
 AppsflyerLauncherModule()->LogEvent(event_name, event_parameters);
 
 // Send LogEvent request with custom event params and UTF8 encoding (for non-English characters)
 std::wstring ws = L"車B1234 こんにちは";
 std::wstring ws2 = L"新人邀约购物日";
-custom_event_parameters = { 
+json custom_event_parameters = { 
     {"goodsName", AppsflyerLauncherModule()->to_utf8(ws)}, 
     {"goodsName2", AppsflyerLauncherModule()->to_utf8(ws2)} 
 };
