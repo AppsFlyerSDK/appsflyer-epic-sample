@@ -18,6 +18,7 @@ public:
 	void Start(bool skipFirst = false);
 	void Stop();
 	void SetCustomerUserId(std::string customerUserID);
+	void SetSharingFilterForPartners(std::string sharingFilter);
 	/*  These methods are called upon a un/successful http request callback.
 	Those are placeholders that you can fill with the desired actions upon success/failure
 	(within AppsflyerLauncherModule.cpp file) */
@@ -35,6 +36,7 @@ private:
 	const char *appID;
 	bool isStopped;
 	std::string cuid;
+	std::string sharing_filter;
 	RequestData CreateRequestData();
 	friend CAppsflyerLauncherModule *AppsflyerLauncherModule();
 	CAppsflyerLauncherModule();

@@ -117,6 +117,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     // Initialize the AF connector
     AppsflyerLauncherModule()->Init(<< DEV_KEY >> , << APP_ID >> );
     //AppsflyerLauncherModule()->SetCustomerUserId("cuid-test");
+    AppsflyerLauncherModule()->SetSharingFilterForPartners("[\"a\",\"b\",\"c\"]");
     AppsflyerLauncherModule()->Start();
 
     // will return false

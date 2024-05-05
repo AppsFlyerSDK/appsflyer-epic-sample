@@ -166,7 +166,32 @@ AppsflyerLauncherModule()->SetCustomerUserId("Test-18-9-23");
 AppsflyerLauncherModule()->Start();
 ```
 
+### SetSharingFilterForPartners
 
+This method lets you configure which partners should the SDK exclude from data-sharing. Partners that are excluded with this method will not receive data through postbacks, APIs, raw data reports, or any other means.
+
+**Method signature**
+
+```c++
+void SetSharingFilterForPartners(std::string sharingFilter)
+```
+
+**Arguments**:
+
+- `std::string sharingFilter`: a list of partners to filter. For example:  `std::string list = "[\"partner1\",\"partner2\"]"`. 
+Please use `[\"all\"]` in order to not send the event to any source.
+
+**Usage**:
+
+```c++
+AppsflyerLauncherModule()->Init(DEV_KEY, APP_ID);
+
+// set the sharing filter for partners a, b & c. please use ["all"] in order to not send the event to any source.
+AppsflyerLauncherModule()->SetCustomerUserId("[\"a\",\"b\",\"c\"]");
+
+// start the SDK (send firstopen/session request)
+AppsflyerLauncherModule()->Start();
+```
 
 ### OnCallbackSuccess, OnCallbackFailure
 
