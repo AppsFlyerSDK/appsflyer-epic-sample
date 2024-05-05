@@ -320,6 +320,9 @@ private:
 		if (!req.customer_user_id.empty()) {
 			oss << ",\"customer_user_id\":\"" << req.customer_user_id << "\"";
 		}
+		if (!req.sharing_filter.empty()) {
+			oss << ",\"sharing_filter\":" << req.sharing_filter;
+		}
 		oss << "}";
 
 		return oss.str();

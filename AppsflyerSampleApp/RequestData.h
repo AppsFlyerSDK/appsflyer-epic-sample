@@ -16,6 +16,7 @@ public:
 	std::string request_id;
 	std::string limit_ad_tracking;
 	std::string customer_user_id;
+	std::string sharing_filter;
 	std::string event_name;
 	json event_parameters;
 	json event_custom_parameters;

@@ -80,6 +80,11 @@ void CAppsflyerLauncherModule::SetCustomerUserId(std::string customerUserID)
 	cuid = customerUserID;
 }
 
+void CAppsflyerLauncherModule::SetSharingFilterForPartners(std::string sharingFilter)
+{
+	sharing_filter = sharingFilter;
+}
+
 RequestData CAppsflyerLauncherModule::CreateRequestData()
 {
 	RequestData req;
@@ -110,6 +115,10 @@ RequestData CAppsflyerLauncherModule::CreateRequestData()
 	if (!cuid.empty()) {
 		req.customer_user_id = cuid;
 	}
+	if (!sharing_filter.empty()) {
+		req.sharing_filter = sharing_filter;
+	}
+
 
 	return req;
 }
