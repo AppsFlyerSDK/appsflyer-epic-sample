@@ -307,3 +307,9 @@ using json = nlohmann::json;
 ## Resetting the attribution
 
 Remove the registry data from `SOFTWARE\Microsoft\Windows\CurrentVersion\Run`. The Registry keys are `AF_counter_[APPID]` and `AF_uuid_[APPID]`.
+
+
+## Deleting AppsFlyer data on uninstall
+
+When uninstalling your app, please make sure to remove the registry data from `SOFTWARE\Microsoft\Windows\CurrentVersion\Run`. The Registry keys are `AF_counter_[APPID]` and `AF_uuid_[APPID]`.
+
